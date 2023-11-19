@@ -3,7 +3,6 @@ import Row from "./Row";
 import requests from "./Requests";
 import Banner from "./Banner";
 import Nav from "./Nav";
-import Nav from "./Nav";
 
 function App() {
   return (
