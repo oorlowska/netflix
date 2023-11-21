@@ -9,20 +9,11 @@ const base_url = "https://image.tmdb.org/t/p/original/";
 
 function MoviePoster({ movie, isLarge }) {
   const [trailerNewUrl, setTrailerNewUrl] = useState("");
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(() => getLocalStorage(movie.id));
 
-  useEffect(() => {
-    const storedIsLiked = localStorage.getItem("isLiked");
-    if (storedIsLiked) {
-      setIsLiked(JSON.parse(storedIsLiked));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("isLiked", JSON.stringify(isLiked));
-  }, [isLiked]);
-
-  // console.log(localStorage.getItem("isLiked"));
+  const heartIconStyle = {
+    color: isLiked ? "red" : "white",
+  };
 
   const handleClick = (movie) => {
     if (trailerNewUrl) {
@@ -40,11 +31,23 @@ function MoviePoster({ movie, isLarge }) {
   const handleLikeClick = () => {
     setIsLiked(!isLiked);
   };
-  
+
+  function getLocalStorage(movieId) {
+    const likedMovie = localStorage.getItem(`isLiked-${movieId}`);
+    return likedMovie !== null ? JSON.parse(likedMovie) : false;
+  }
+
+  useEffect(() => {
+    localStorage.setItem(`isLiked-${movie.id}`, JSON.stringify(isLiked));
+  }, [isLiked, movie.id]);
+
   return (
     <div className={`row__posterDiv`}>
       <p className="heart__icon" onClick={handleLikeClick}>
-        <FontAwesomeIcon icon={isLiked ? faHeartSolid : faHeartRegular} />
+        <FontAwesomeIcon
+          icon={isLiked ? faHeartSolid : faHeartRegular}
+          style={heartIconStyle}
+        />
       </p>
       <img
         key={movie.id}
@@ -56,4 +59,5 @@ function MoviePoster({ movie, isLarge }) {
     </div>
   );
 }
+
 export default MoviePoster;
