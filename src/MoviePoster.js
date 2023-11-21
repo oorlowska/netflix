@@ -9,17 +9,11 @@ const base_url = "https://image.tmdb.org/t/p/original/";
 
 function MoviePoster({ movie, isLarge }) {
   const [trailerNewUrl, setTrailerNewUrl] = useState("");
-  const [isLiked, setIsLiked] = useState(() => {
-    const storedIsLiked = localStorage.getItem(`isLiked-${movie.id}`);
-    return storedIsLiked !== null ? JSON.parse(storedIsLiked) : false;
-  });
+  const [isLiked, setIsLiked] = useState(() => getLocalStorage(movie.id));
+
   const heartIconStyle = {
     color: isLiked ? "red" : "white",
   };
-
-  useEffect(() => {
-    localStorage.setItem(`isLiked-${movie.id}`, JSON.stringify(isLiked));
-  }, [isLiked, movie.id]);
 
   const handleClick = (movie) => {
     if (trailerNewUrl) {
@@ -37,7 +31,16 @@ function MoviePoster({ movie, isLarge }) {
   const handleLikeClick = () => {
     setIsLiked(!isLiked);
   };
-  
+
+  function getLocalStorage(movieId) {
+    const likedMovie = localStorage.getItem(`isLiked-${movieId}`);
+    return likedMovie !== null ? JSON.parse(likedMovie) : false;
+  }
+
+  useEffect(() => {
+    localStorage.setItem(`isLiked-${movie.id}`, JSON.stringify(isLiked));
+  }, [isLiked, movie.id]);
+
   return (
     <div className={`row__posterDiv`}>
       <p className="heart__icon" onClick={handleLikeClick}>
